@@ -14,6 +14,8 @@ import { InMemoryCache } from "apollo-cache-inmemory";
 import { HttpLink } from "apollo-link-http";
 import { onError } from "apollo-link-error";
 import { ApolloLink } from "apollo-link";
+import { WebSocketLink } from "apollo-link-ws";
+
 ///////////////////////////////////////////////////////////////////////////
 import Root                 from './Root';
 import 'animate.css';
@@ -33,6 +35,12 @@ const BootstrapedElement    = document.getElementById(ELEMENT_TO_BOOTSTRAP);
 
 injectTpEventPlugin();
 
+const wsLink = new WebSocketLink({
+  uri: `ws://localhost:8001/subscriptions`,
+  options: {
+    reconnect: true
+  }
+});
 
 const client = new ApolloClient({
   link: ApolloLink.from([
@@ -45,8 +53,9 @@ const client = new ApolloClient({
         );
       if (networkError) console.log(`[Network error]: ${networkError}`);
     }),
+    wsLink,
     new HttpLink({
-      uri: "http://27.78.16.8:8087/graphql",
+      uri: "http://localhost:8081/graphql",
       credentials: "same-origin"
     })
   ]),

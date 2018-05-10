@@ -46,9 +46,18 @@ const USERS_QUERY = gql`
   }
 `;
 
+const MERCHANT_CONFIRMED_SUBSCRIPTION = gql`
+  subscription {
+    merchantConfirmed {
+      username
+      email
+    }
+  }
+`;
+
 const UsersQuery = ({ children }) => (
   <Query query={USERS_QUERY}>
-    {({ loading, error, data }) => {
+    {({ loading, error, data, subscribeToMore }) => {
       if (loading)
         return (
           <div style={{ paddingTop: 20 }}>
@@ -57,7 +66,24 @@ const UsersQuery = ({ children }) => (
         );
       if (error) return <p>Error</p>;
 
-      return children(data.getAllUsers);
+      const subscribeToMoreMerchantConfirmed = () => {
+        subscribeToMore({
+          document: MERCHANT_CONFIRMED_SUBSCRIPTION,
+          updateQuery: (prev, { subscriptionData }) => {
+
+            console.log('get subscription: ', subscriptionData)
+            // if (!subscriptionData.data || !subscriptionData.data.pinAdded)
+            //   return prev;
+            // const newPinAdded = subscriptionData.data.pinAdded;
+
+            // return Object.assign({}, prev, {
+            //   pins: [...prev.pins, newPinAdded]
+            // });
+          }
+        });
+      };
+
+      return children(data.getAllUsers, subscribeToMoreMerchantConfirmed);
     }}
   </Query>
 );
@@ -70,7 +96,7 @@ class Root extends Component {
           <Route exact path="/login" component={Login} />
           <UsersQuery> 
             {
-              users => <App users={users} />
+              (users, subscribeToMoreMerchantConfirmed) => <App users={users} subscribeToMoreMerchantConfirmed={subscribeToMoreMerchantConfirmed}/>
             }
           </UsersQuery>
           {/* logout: just redirects to login (App will take care of removing the token) */}
