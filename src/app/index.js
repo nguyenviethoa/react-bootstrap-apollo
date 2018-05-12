@@ -36,7 +36,7 @@ const BootstrapedElement    = document.getElementById(ELEMENT_TO_BOOTSTRAP);
 injectTpEventPlugin();
 
 const wsLink = new WebSocketLink({
-  uri: `ws://localhost:8001/subscriptions`,
+  uri: `wss://27.78.16.8:8087/subscriptions`,
   options: {
     reconnect: true
   }
@@ -55,7 +55,7 @@ const client = new ApolloClient({
     }),
     wsLink,
     new HttpLink({
-      uri: "http://localhost:8081/graphql",
+      uri: "http://27.78.16.8:8087/graphql",
       credentials: "same-origin"
     })
   ]),
