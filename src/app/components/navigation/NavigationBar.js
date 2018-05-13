@@ -13,8 +13,8 @@ const NavigationBar = ({
   handleRightNavItemClick
 }) => {
   return (
-    <nav className="navbar navbar-default">
-      <div className="containersCustom">
+    <nav className="navbar navbar-default bg-light sticky-top">
+      <div className="containersCustom padding">
         <div className="navbar-header">
           {
             <Humburger />

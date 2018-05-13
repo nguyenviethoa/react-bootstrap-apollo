@@ -7,7 +7,7 @@ import {
 }                   from 'react-router';
 import Home         from '../views/home/Home';
 import About        from '../views/about/About';
-import Protected    from '../views/protected/Protected';
+import Logout    from '../views/logout/Logout';
 import PrivateRoute from '../components/privateRoute/PrivateRoute';
 
 const MainRoutes = () => {
@@ -16,7 +16,7 @@ const MainRoutes = () => {
       <Route exact path="/" component={Home} />
       <Route path="/about" component={About} />
       {/* private views: need user to be authenticated */}
-      <PrivateRoute path="/protected" component={Protected} />
+      <PrivateRoute path="/logout" component={Logout} />
     </Switch>
   );
 };

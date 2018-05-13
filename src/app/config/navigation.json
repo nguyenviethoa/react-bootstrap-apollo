@@ -1,5 +1,5 @@
 {
-  "brand"       : "React Bootstrap Starter",
+  "brand"       : "Close Deal",
   "leftLinks"   : [],
   "rightLinks"  : [
     {
@@ -7,9 +7,9 @@
       "link"  : "/"
     },
     {
-      "label":      "Protected",
-      "link":       "/protected",
-      "view":       "protected",
+      "label":      "Login",
+      "link":       "/login",
+      "view":       "login",
       "isRouteBtn": true
     },
     {
@@ -19,9 +19,9 @@
       "isRouteBtn": true
     },
     {
-      "label":      "Disconnect",
-      "link":       "/login",
-      "view":       "login",
+      "label":      "Logout",
+      "link":       "/logout",
+      "view":       "logout",
       "isRouteBtn": true
     }
   ]

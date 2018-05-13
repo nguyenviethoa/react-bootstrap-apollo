@@ -18,7 +18,7 @@ class Protected extends PureComponent {
     return(
       <AnimatedView>
         <h1>
-          Protected view
+          Logout view
         </h1>
         <h3>
           If you can read, it means you are authenticated

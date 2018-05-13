@@ -23,6 +23,8 @@ import 'jquery';
 import 'font-awesome/css/font-awesome.min.css'; // css is not managed by CSSModule
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.min.js';
+import 'bootstrap/dist/css/bootstrap-theme.css';
+import 'font-awesome/css/font-awesome.min.css';
 import './style/index.scss'; // import general styles, mixins etc...
 
 // smoothscroll polyfill
@@ -36,7 +38,7 @@ const BootstrapedElement    = document.getElementById(ELEMENT_TO_BOOTSTRAP);
 injectTpEventPlugin();
 
 const wsLink = new WebSocketLink({
-  uri: `wss://27.78.16.8:8087/subscriptions`,
+  uri: `ws://27.78.16.8:8087/subscriptions`,
   options: {
     reconnect: true
   }
