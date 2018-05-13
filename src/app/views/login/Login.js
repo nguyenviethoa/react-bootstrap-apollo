@@ -11,6 +11,8 @@ import {
   Col,
   Button
 }                         from 'react-bootstrap';
+import { graphql } from 'react-apollo';
+import loginMutation from './mutations';
 import styles             from './login.scss';
 import auth               from '../../services/auth';
 import { appConfig }      from '../../config/appConfig';
@@ -34,6 +36,7 @@ type State = {
 };
 // #endregion
 
+@graphql(loginMutation)
 class Login extends PureComponent<Props, State> {
   static propTypes= {
     // react-router 4:
@@ -193,7 +196,7 @@ class Login extends PureComponent<Props, State> {
     if (event) {
       event.preventDefault();
     }
-
+    console.log('start handle login ');
     const {
       history
     } = this.props;
@@ -204,23 +207,24 @@ class Login extends PureComponent<Props, State> {
     } = this.state;
 
     const userLogin = {
-      login:    email,
+      email,
       password: password
     };
 
     try {
       this.setState({ isLogging: true });
-      const response = await this.logUser(userLogin);
+      const response = await this.logUser(email, password);
+      console.log('response: ', response);
       const {
-        data: {
+        loginMerchant: {
           token,
-          user
+          merchant
         }
       } = response;
 
-      auth.setToken(token);
-      auth.setUserInfo(user);
-      this.setState({ isLogging: false });
+      // auth.setToken(token);
+      // auth.setUserInfo(user);
+      // this.setState({ isLogging: false });
 
       history.push({ pathname: '/' }); // back to Home
     } catch (error) {
@@ -232,45 +236,64 @@ class Login extends PureComponent<Props, State> {
   }
 
   logUser = async (
-    login: string= '',
+    email: string= '',
     password: string= ''
   ) => {
-    const __SOME_LOGIN_API__ = 'login';
-    const url         = `${getLocationOrigin()}/${__SOME_LOGIN_API__}`;
-    const method      = 'post';
-    const headers     = {};
-    const options     = {
-      credentials: 'same-origin',
-      data: {
-        login,
-        password
-      }
-    };
+    console.log('start login mutation', {email, password });
+    let result;
+    await this.props.mutate({ variables: { email, password } })
+    .then(({ data }) => {
+        console.log('start login mutation', data);
+        localStorage.setItem('authToken', data.loginMerchant.token);
+        this.setState({ errorNetwork: false });
+        this.setState({ loading: false });
+        console.log('local storage: ', localStorage);
+        result = data;
+      }).catch((error) => {
+        console.log('login not ok: ');
+        this.setState({ errorNetwork: true });
+        console.log('Errors:', this.state.errorNetwork);
+        this.setState({ loading: false });
+    });
 
-    if (appConfig.DEV_MODE) {
-      return new Promise(
-        resolve => setTimeout(resolve({ data: userInfoMock }), 3000)
-      );
-    }
+    return result;
 
-    try {
-      const response = await axios.request({
-        method,
-        url,
-        withCredentials: true,
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'Acces-Control-Allow-Origin': '*',
-          ...headers
-        },
-        ...options
-      });
+    // const __SOME_LOGIN_API__ = 'login';
+    // const url         = `${getLocationOrigin()}/${__SOME_LOGIN_API__}`;
+    // const method      = 'post';
+    // const headers     = {};
+    // const options     = {
+    //   credentials: 'same-origin',
+    //   data: {
+    //     email,
+    //     password
+    //   }
+    // };
 
-      return Promise.resolve(response);
-    } catch (error) {
-      return Promise.reject(error);
-    }
+    // if (appConfig.DEV_MODE) {
+    //   return new Promise(
+    //     resolve => setTimeout(resolve({ data: userInfoMock }), 3000)
+    //   );
+    // }
+
+    // try {
+    //   const response = await axios.request({
+    //     method,
+    //     url,
+    //     withCredentials: true,
+    //     headers: {
+    //       'Accept': 'application/json',
+    //       'Content-Type': 'application/json',
+    //       'Acces-Control-Allow-Origin': '*',
+    //       ...headers
+    //     },
+    //     ...options
+    //   });
+
+    //   return Promise.resolve(response);
+    // } catch (error) {
+    //   return Promise.reject(error);
+    // }
   }
 
   goHome = (event: any) => {

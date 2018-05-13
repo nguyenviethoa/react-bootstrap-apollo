@@ -37,15 +37,31 @@ const BootstrapedElement    = document.getElementById(ELEMENT_TO_BOOTSTRAP);
 
 injectTpEventPlugin();
 
+/////////////////////////////////////////////// setup websocket for graphql subscription /////////////////////////////////////////////
 const wsLink = new WebSocketLink({
   uri: `ws://27.78.16.8:8087/subscriptions`,
   options: {
     reconnect: true
   }
 });
+////////////////////////////////// setup apollo client ///////////////////////////////////////////////////////////////////////////////
+const AuthLink = (operation, forward) => {
+  const token = localStorage.authToken;
+
+  operation.setContext(context => ({
+    ...context,
+    headers: {
+      ...context.headers,
+      authorization: `Bearer ${token}`,
+    },
+  }));
+
+  return forward(operation);
+};
 
 const client = new ApolloClient({
   link: ApolloLink.from([
+    AuthLink,
     onError(({ graphQLErrors, networkError }) => {
       if (graphQLErrors)
         graphQLErrors.map(({ message, locations, path }) =>
@@ -63,7 +79,7 @@ const client = new ApolloClient({
   ]),
   cache: new InMemoryCache()
 });
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 const renderApp = RootComponent => {
   render(
     <AppContainer
